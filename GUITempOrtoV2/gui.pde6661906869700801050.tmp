@@ -32,10 +32,6 @@ public void button1_click1(GButton source, GEvent event) { //_CODE_:button1:9992
 
 } //_CODE_:button1:999297:
 
-public void rele1_click1(GButton source, GEvent event) { //_CODE_:rele1:551817:
-  println("rele1 - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:rele1:551817:
-
 
 
 // Create all the GUI controls. 
@@ -64,17 +60,10 @@ public void createGUI(){
   humidity.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
   humidity.setText("Humidity");
   humidity.setOpaque(true);
-  movimento = new GLabel(this, 9, 257, 250, 45);
+  movimento = new GLabel(this, 6, 197, 250, 45);
   movimento.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
   movimento.setText("Movimento");
   movimento.setOpaque(true);
-  soil_humidity = new GLabel(this, 9, 201, 250, 45);
-  soil_humidity.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  soil_humidity.setText("Soil Humidity");
-  soil_humidity.setOpaque(true);
-  rele1 = new GButton(this, 11, 335, 80, 30);
-  rele1.setText("Face text");
-  rele1.addEventHandler(this, "rele1_click1");
 }
 
 // Variable declarations 
@@ -85,5 +74,3 @@ GLabel label1;
 GButton button1; 
 GLabel humidity; 
 GLabel movimento; 
-GLabel soil_humidity; 
-GButton rele1; 
