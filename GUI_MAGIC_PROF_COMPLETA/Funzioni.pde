@@ -2,9 +2,9 @@ void connessioneSeriale() {
   if (myPort==null) {
     String comDaUsare= Lista_Com.getSelectedText();
     myPort = new Serial(this, comDaUsare, 9600);
-    button_com.setText("DISCONNETTI");
+    button_com.setText("Disconnect");
   } else {
-    button_com.setText("CONNETTI");
+    button_com.setText("Connect");
     myPort.stop();
     myPort=null;
   }
