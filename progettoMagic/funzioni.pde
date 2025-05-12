@@ -19,12 +19,12 @@ void starting()
   saveStrings("data/list_915007", Serial.list());
 }
 
-//funzione per scelta file
+//funzione per scelta file mappatura
 void sciegliFile() {
   selectInput("Scegli un file", "fileSelected");
 }
 
-//funzione per la scelta del file
+//funzione per la scelta del file di mappa
 void fileSelected(File selection) {
   if (selection == null) {
     println(noFile);
@@ -37,12 +37,12 @@ void fileSelected(File selection) {
 }
 
 
-//button_selezionaFile
+//button_selezionaFile da salvare
 void selezionaFile(){
   selectOutput("Scegli un file per salvare", "fileSelezionato"); 
 }
 
-//button_salvaDato
+//button_salvaDato funziona di salvataggio
 void salvaDato(){
 if (!selectedFilePath.equals(noFile)) {
       String dataOrari = day()+ "/" + month() + "/" + year() +", " + hour() + ":" + minute() + ":" + second();
@@ -69,6 +69,7 @@ void fileSelezionato(File selection) {
   dataLocation_label.setText("Location:"+selectedFilePath);
 }
 
+//scrittura dei dati
 void scriviDati(String path, String dati) {
   try {
     PrintWriter writer = new PrintWriter(new FileWriter(path, true)); // true = append mode
@@ -85,7 +86,7 @@ void scriviDati(String path, String dati) {
 
 
 
-
+//stampa del valore in gauss
 void stampaDisplay() {
   Font mioFont = new Font("Arial", Font.BOLD, 30);
   display1.setFont(mioFont);
@@ -115,6 +116,7 @@ float interpolazioneLineare(float vin, int[] xVals, int[] yVals) {
   return Float.NaN;
 }
 
+//lettura file di mappatura
 void caricamentoDatiSensore(String file, int [] dati1, int[] dati2) {
   // Carica le righe dal file
   String[]   righe = loadStrings(file);
@@ -123,5 +125,36 @@ void caricamentoDatiSensore(String file, int [] dati1, int[] dati2) {
     String[] valori = split(righe[i], ',');  // Divide la riga con la virgola
     dati1[i] = int(trim(valori[0]));
     dati2[i] = int(trim(valori[1]));
+  }
+}
+
+//funzione on off
+void onOffGrafico() {
+  if (on_off_Grafico==0) {
+    on_off_Grafico=1;
+    sensorActivation_button.setText("OFF");
+    sensorActivation_button.setLocalColorScheme(GCScheme.RED_SCHEME);
+  } else {
+    on_off_Grafico=0;
+    sensorActivation_button.setText("ON");
+    sensorActivation_button.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+  }
+}
+
+void onOff() {
+  if (myPort!=null) {
+    if (sensorActivation_button.getText().equals("ON")) {
+      myPort.write('a');
+      println("Inviato: a");
+      stato_on_off=1;
+      sensorActivation_button.setText("OFF");
+      sensorActivation_button.setLocalColorScheme(GCScheme.RED_SCHEME);
+    } else {
+      myPort.write('s');
+      println("Inviato: s");
+      stato_on_off=0;
+      sensorActivation_button.setText("ON");
+      sensorActivation_button.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+    }
   }
 }
