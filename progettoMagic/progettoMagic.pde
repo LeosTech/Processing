@@ -10,6 +10,7 @@ import grafica.*;
 //setup
 void setup() {
   size(900, 650, JAVA2D);
+  textSize(14);
  //controlla le seriali disponibili
  starting();
   // Prima crea la GUI

@@ -139,6 +139,14 @@ public void createGUI(){
   
   //end sensor controlling 
   
+  //display value 
+  
+  //------------value label setup 
+  display1 = new GLabel(this, 261, 130, 223, 60);
+  display1.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  display1.setText("VALUE");
+  display1.setOpaque(true);
+  
   
 }
 
