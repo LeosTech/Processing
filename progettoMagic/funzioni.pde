@@ -21,7 +21,7 @@ void starting()
 
 //funzione per scelta file mappatura
 void sciegliFile() {
-  selectInput("Scegli un file", "fileSelected");
+  selectInput("Choose a file", "fileSelected");
 }
 
 //funzione per la scelta del file di mappa
@@ -30,7 +30,7 @@ void fileSelected(File selection) {
     println(noFile);
     selectedFile = noFile;
   } else {
-    println("File selezionato: " + selection.getAbsolutePath());
+    println("File selected: " + selection.getAbsolutePath());
     selectedFile = selection.getAbsolutePath();
     caricamentoDatiSensore(selectedFile, arrayVolt, arrayGauss);
   }
@@ -39,7 +39,7 @@ void fileSelected(File selection) {
 
 //button_selezionaFile da salvare
 void selezionaFile(){
-  selectOutput("Scegli un file per salvare", "fileSelezionato"); 
+  selectOutput("Choose a file to save", "fileSelezionato"); 
 }
 
 //button_salvaDato funziona di salvataggio
@@ -51,17 +51,17 @@ if (!selectedFilePath.equals(noFile)) {
       scriviDati(selectedFilePath, riga);
       }
     } else {
-      println("Nessun file selezionato.");
+      println("No file selected.");
     }
 }
 
 
 void fileSelezionato(File selection) {
   if (selection == null) {
-    println("Nessun file selezionato.");
+    println("No file selected.");
     selectedFilePath = noFile;
   } else {
-    println("File selezionato: " + selection.getAbsolutePath());
+    println("File selected: " + selection.getAbsolutePath());
     selectedFilePath = selection.getAbsolutePath();
   }
   Font mioFont = new Font("Arial", Font.BOLD, 10);
@@ -75,7 +75,7 @@ void scriviDati(String path, String dati) {
     PrintWriter writer = new PrintWriter(new FileWriter(path, true)); // true = append mode
     writer.print(dati);
     writer.close();
-    println("Dati scritti: " + dati.trim());
+    println("Data output: " + dati.trim());
   }
   catch (IOException e) {
     e.printStackTrace();

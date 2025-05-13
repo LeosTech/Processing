@@ -53,6 +53,9 @@ public void createGUI(){
   G4P.messagesEnabled(false);
   G4P.setGlobalColorScheme(GCScheme.BLUE_SCHEME);
   G4P.setMouseOverEnabled(false);
+  G4P.setDisplayFont("Arial", G4P.PLAIN, 16);
+  G4P.setInputFont("Arial", G4P.PLAIN, 16);
+  G4P.setSliderFont("Arial", G4P.PLAIN, 13);
   surface.setTitle("Magic Software");
   //---------------------------------
   
@@ -61,11 +64,11 @@ public void createGUI(){
   serial_label.setTextAlign(GAlign.LEFT, GAlign.TOP);
   serial_label.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
   serial_label.setOpaque(true);
-  serial_label.setText("     Serial ports:");
+  serial_label.setText("  Serial ports");
   //----------------------------------------
   
   //------------ droplist set
-  serial_list = new GDropList(this, 124, 24, 116, 80, 3, 10);
+  serial_list = new GDropList(this, 134, 28, 100, 80, 2, 20);
   serial_list.setLocalColorScheme(GCScheme.GREEN_SCHEME);
   serial_list.setOpaque(true);
   serial_list.setItems(loadStrings("list_915007"), 0);
@@ -86,7 +89,7 @@ public void createGUI(){
   //save file setup
   
   //--------------------data file location
-  dataLocation_label = new GLabel(this, 254, 19, 270, 61);
+  dataLocation_label = new GLabel(this, 261, 19, 223, 91);
   dataLocation_label.setTextAlign(GAlign.LEFT, GAlign.BOTTOM);
   dataLocation_label.setText("Location:");
   dataLocation_label.setLocalColorScheme(GCScheme.BLUE_SCHEME);
@@ -94,7 +97,7 @@ public void createGUI(){
   //---------------------------------------------
   
   //----------------selection file button
-  selFile_button = new GButton(this, 262, 22, 130, 26);
+  selFile_button = new GButton(this, 272, 32, 100, 26);
   selFile_button.setLocalColorScheme(GCScheme.GREEN_SCHEME);
   selFile_button.setOpaque(true);
   selFile_button.setText("Select File");
@@ -102,7 +105,7 @@ public void createGUI(){
   //--------------------------------------------------------
   
   //----------save data button 
-  saveData_button = new GButton(this, 422, 22, 80, 26);
+  saveData_button = new GButton(this, 390, 32, 80, 26);
   saveData_button.setLocalColorScheme(GCScheme.GREEN_SCHEME);
   saveData_button.setOpaque(true);
   saveData_button.setText("Save");
@@ -115,10 +118,10 @@ public void createGUI(){
   
   //---------------label setup
   sensor_controll_label = new GLabel(this, 18, 130, 223, 91);
-  sensor_controll_label.setTextAlign(GAlign.LEFT, GAlign.TOP);
+  sensor_controll_label.setTextAlign(GAlign.CENTER, GAlign.TOP);
   sensor_controll_label.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
   sensor_controll_label.setOpaque(true);
-  sensor_controll_label.setText("   Sensor controller:");
+  sensor_controll_label.setText("Sensor controller");
   //-------------------------------------
   
   //-------------------button selFile setup
@@ -142,7 +145,7 @@ public void createGUI(){
   //display value 
   
   //------------value label setup 
-  display1 = new GLabel(this, 261, 130, 223, 60);
+  display1 = new GLabel(this, 261, 130, 223, 91);
   display1.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
   display1.setText("VALUE");
   display1.setOpaque(true);

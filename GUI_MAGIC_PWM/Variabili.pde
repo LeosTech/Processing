@@ -1,3 +1,9 @@
+import g4p_controls.*;
+import peasy.*;
+import processing.serial.*;
+import java.awt.Font;
+import java.io.FileWriter;
+import grafica.*;
 GPlot plot;
 GPointsArray punti;
 ArrayList<Float> dati;
@@ -21,3 +27,10 @@ final int N_valori = 5;
 int[] arrayVolt= new int[N_valori];           // Array 2D per contenere i numeri
 int[] arrayGauss= new int[N_valori];
 int on_off_Grafico=0;
+int valorePWM=0;
+int tenpo_invio_PWM=100;
+int set_invio_PWM=0;
+int s_magnete=0;
+int stato_s_magnete=0;
+char valoreDiInvio_PWM='x';
+int nuovo_slider_PWM=0;
