@@ -12,8 +12,8 @@ void connessioneSeriale() {
   }
   
 }
-//funzione di starting
 
+//funzione di starting
 void starting()
 {
   saveStrings("data/list_915007", Serial.list());
