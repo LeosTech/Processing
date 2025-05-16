@@ -110,6 +110,10 @@ public void timer1_Action1(GTimer source) { //_CODE_:timer1:420940:
   invioPWM();
 } //_CODE_:timer1:420940:
 
+synchronized public void win_draw1(PApplet appc, GWinData data) { //_CODE_:window2:788968:
+  appc.background(230);
+} //_CODE_:window2:788968:
+
 
 
 // Create all the GUI controls. 
@@ -266,7 +270,12 @@ public void createGUI(){
   label8.setText("DELTA SMAGNETIZZAZIONE");
   label8.setOpaque(false);
   timer1 = new GTimer(this, this, "timer1_Action1", 1000);
+  window2 = GWindow.getWindow(this, "Window title", 0, 0, 240, 120, JAVA2D);
+  window2.noLoop();
+  window2.setActionOnClose(G4P.KEEP_OPEN);
+  window2.addDrawHandler(this, "win_draw1");
   window1.loop();
+  window2.loop();
 }
 
 // Variable declarations 
@@ -302,3 +311,4 @@ GLabel label2;
 GLabel label6; 
 GLabel label8; 
 GTimer timer1; 
+GWindow window2;
