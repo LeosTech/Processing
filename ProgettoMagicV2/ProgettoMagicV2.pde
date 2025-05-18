@@ -1,21 +1,15 @@
-// Need G4P library
-import g4p_controls.*;
-// You can remove the PeasyCam import if you are not using
-// the GViewPeasyCam control or the PeasyCam library.
-import peasy.*;
-
-
 public void setup(){
-  size(920, 520, JAVA2D);
+  size(920, 520, P2D);
   createGUI();
   customGUI();
+  inizializzazione();
   // Place your setup code here
   
 }
 
 public void draw(){
   background(50);
-  
+  esecuzione();
 }
 
 // Use this method to add additional statements
