@@ -86,18 +86,27 @@ public void PWM_delta_slider_change1(GSlider source, GEvent event) { //_CODE_:PW
 
 public void PWM_start_click1(GButton source, GEvent event) { //_CODE_:PWM_start:882456:
   println("PWM_start - GButton >> GEvent." + event + " @ " + millis());
+  start_PWM();
 } //_CODE_:PWM_start:882456:
 
 public void PWM_stop_click1(GButton source, GEvent event) { //_CODE_:PWM_stop:765107:
   println("PWM_stop - GButton >> GEvent." + event + " @ " + millis());
+  stop_PWM();
 } //_CODE_:PWM_stop:765107:
 
 public void PWM_reset_click1(GButton source, GEvent event) { //_CODE_:PWM_reset:667534:
   println("PWM_reset - GButton >> GEvent." + event + " @ " + millis());
+  reset_PWM();
 } //_CODE_:PWM_reset:667534:
+
+public void smagnete_button_click1(GButton source, GEvent event) { //_CODE_:smagnete_button:825305:
+  println("smagnete_button - GButton >> GEvent." + event + " @ " + millis());
+  if (myPort!=null) { stato_s_magnete=1;};
+} //_CODE_:smagnete_button:825305:
 
 public void timer1_Action1(GTimer source) { //_CODE_:timer1:844011:
   println("timer1 - GTimer >> an event occured @ " + millis());
+  invioPWM();
 } //_CODE_:timer1:844011:
 
 
@@ -147,7 +156,7 @@ public void createGUI(){
   soglia_label.setText("Controll Value:");
   soglia_label.setLocalColorScheme(GCScheme.CYAN_SCHEME);
   soglia_label.setOpaque(true);
-  controllValue = new GTextField(this, 430, 120, 90, 50, G4P.SCROLLBARS_NONE);
+  controllValue = new GTextField(this, 429, 121, 90, 50, G4P.SCROLLBARS_NONE);
   controllValue.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
   controllValue.setOpaque(true);
   controllValue.addEventHandler(this, "controllValue_change1");
@@ -236,6 +245,9 @@ public void createGUI(){
   PWM_reset = new GButton(window1, 310, 170, 80, 30);
   PWM_reset.setText("RESET");
   PWM_reset.addEventHandler(this, "PWM_reset_click1");
+  smagnete_button = new GButton(window1, 310, 215, 80, 30);
+  smagnete_button.setText("DEMAGNETIZATION");
+  smagnete_button.addEventHandler(this, "smagnete_button_click1");
   timer1 = new GTimer(this, this, "timer1_Action1", 1000);
   window1.loop();
 }
@@ -271,4 +283,5 @@ GLabel PWM_value;
 GButton PWM_start; 
 GButton PWM_stop; 
 GButton PWM_reset; 
+GButton smagnete_button; 
 GTimer timer1; 

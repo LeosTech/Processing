@@ -44,7 +44,7 @@ void onOff() {
 }
 
 void livelloSoglia() {
-  float valore =  controllValue.getValueF();
+  float valore = float(controllValue.getText());
   if (valore> GausOut) {
     if (stato_led!=1) {
       stato_led=1;
