@@ -25,11 +25,13 @@ float[] volt;
 float[] gauss;
 float Vin = 4.75;
 float GausOut;
-final int N_valori = 5;
+float VoltOut;
+int N_valori = 1;
 
 // Array di righe lette dal file
-int[] arrayVolt= new int[N_valori];           // Array 2D per contenere i numeri
-int[] arrayGauss= new int[N_valori];
+int[] arrayVolt;           // Array 2D per contenere i numeri
+int[] arrayGauss;
+int[] arrayIN;
 int on_off_Grafico=0;
 int valorePWM=0;
 int tenpo_invio_PWM=100;
