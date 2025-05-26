@@ -309,12 +309,12 @@ public class Finestra extends JFrame implements ActionListener
             {
                 // Verifica se la linea è vuota
                 if (linea.trim().isEmpty()) continue;
-
-                // Dividi la linea in base al carattere "_"
-                String[] parti = linea.split("_");
                 
-                // Controlla se è la prima linea con i parametri (6 valori)
-                if (parti.length == 6 && linea.matches("^[0-9_.,\\-]+$")) {
+                // Dividi la linea in base al carattere "_"
+                String[] parti = linea.split(",");
+                
+                 // Controlla se è la prima linea con i parametri (6 valori)
+                if (parti.length == 6 && linea.matches("^[0-9,\\-]+$")) {
                     // È la riga dei parametri, aggiorna i campi di testo
                     try {
                         tfPunti.setText(parti[0]);
@@ -337,9 +337,9 @@ public class Finestra extends JFrame implements ActionListener
                 {
                     try 
                     {
-                        double gauss = Double.parseDouble(parti[0].trim());
-                        double volt = Double.parseDouble(parti[1].trim());
-                        String binario = parti[2].trim();
+                        double gauss = Double.parseDouble(parti[1].trim());
+                        double volt = Double.parseDouble(parti[2].trim());
+                        String binario = parti[0].trim();
 
                         // Aggiungi il dato alla tabella
                         modelloTabella.aggiungiDato(gauss, volt, binario);
@@ -367,6 +367,9 @@ public class Finestra extends JFrame implements ActionListener
                 {
                     System.err.println("Formato linea non valido: " + linea);
                 }
+                
+                
+                // Formato vecchio con 2 valori: gauss_voltbit (per retrocompatibilità)
             }
 
             JOptionPane.showMessageDialog(this, 

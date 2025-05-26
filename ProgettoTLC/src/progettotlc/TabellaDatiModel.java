@@ -15,6 +15,27 @@ public class TabellaDatiModel extends AbstractTableModel
     private int maxGauss = 1000;
     private int minVolt = 0;
     private int maxVolt = 5000;
+
+    private void fireTableRowUpdated(int rowIndex) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
+    // Enum per i tipi di funzione
+    public enum TipoFunzione {
+        LINEARE,
+        ESPONENZIALE
+    }
+    
+    private TipoFunzione tipoFunzioneVolt = TipoFunzione.ESPONENZIALE; // Default esponenziale
+    
+    public void setTipoFunzioneVolt(TipoFunzione tipo) {
+        this.tipoFunzioneVolt = tipo;
+        ricalcolaValori();
+    }
+    
+    public TipoFunzione getTipoFunzioneVolt() {
+        return tipoFunzioneVolt;
+    }
     
     public void setNumeroBit(int numeroBit) {
         this.numeroBit = numeroBit;
@@ -39,7 +60,7 @@ public class TabellaDatiModel extends AbstractTableModel
             DatiGaussVoltBin dato = dati.get(i);
             double nuoviVolt = calcolaVolt(dato.getGauss());
             long nuovoBinario = calcolaBinario(dato.getGauss());
-            dati.set(i, new DatiGaussVoltBin(dato.getGauss(), nuoviVolt, nuovoBinario));
+            dati.set(i, new DatiGaussVoltBin(nuovoBinario,dato.getGauss(), nuoviVolt));
         }
         fireTableDataChanged();
     }
@@ -48,7 +69,7 @@ public class TabellaDatiModel extends AbstractTableModel
     {
         double volt = calcolaVolt(gauss);
         long binario = calcolaBinario(gauss);
-        dati.add(new DatiGaussVoltBin(gauss, volt, binario));
+        dati.add(new DatiGaussVoltBin(binario,gauss, volt));
         fireTableDataChanged();
     }
     
@@ -61,14 +82,37 @@ public class TabellaDatiModel extends AbstractTableModel
         } catch (NumberFormatException e) {
             binario = calcolaBinario(gauss);
         }
-        dati.add(new DatiGaussVoltBin(gauss, volt, binario));
+        dati.add(new DatiGaussVoltBin(binario, gauss, volt));
         fireTableDataChanged();
     }
     
-    private int calcolaVolt(double gauss) {
-        // Formula: V = 1000 * (1,0013^GAUSS + 1,25)
-        int voltint = (int) Math.round(1000 * (Math.pow(1.0013, gauss) + 1.25));
-        return voltint;
+    private double calcolaVolt(double gauss) {
+        return switch (tipoFunzioneVolt) {
+            case LINEARE -> calcolaVoltLineare(gauss);
+            case ESPONENZIALE -> calcolaVoltEsponenziale(gauss);
+            default -> calcolaVoltEsponenziale(gauss);
+        };
+    }
+    
+    private double calcolaVoltLineare(double gauss) {
+        // Funzione lineare: mappa linearmente il range gauss sul range volt
+        double rangeGauss = maxGauss - minGauss;
+        double rangeVolt = maxVolt - minVolt;
+        
+        if (rangeGauss == 0) return minVolt;
+        
+        // Normalizza gauss nel range [0, 1]
+        double normalizzato = (gauss - minGauss) / rangeGauss;
+        // Limita il valore tra 0 e 1
+        normalizzato = Math.max(0, Math.min(1, normalizzato));
+        
+        // Mappa sul range volt
+        return minVolt + normalizzato * rangeVolt;
+    }
+    
+    private double calcolaVoltEsponenziale(double gauss) {
+        // Formula esponenziale originale: V = 1000 * (1,0013^GAUSS + 1,25)
+        return 1000 * (Math.pow(1.0013, gauss) + 1.25);
     }
     
     private long calcolaBinario(double gauss) {
@@ -141,7 +185,7 @@ public class TabellaDatiModel extends AbstractTableModel
                 double nuoviVolt = calcolaVolt(nuovoGauss);
                 long nuovoBinario = calcolaBinario(nuovoGauss);
                 
-                dati.set(rowIndex, new DatiGaussVoltBin(nuovoGauss, nuoviVolt, nuovoBinario));
+                dati.set(rowIndex, new DatiGaussVoltBin(nuovoBinario,nuovoGauss, nuoviVolt));
                 
                 // Notifica il cambiamento di tutte le colonne
                 fireTableRowUpdated(rowIndex);
@@ -152,7 +196,7 @@ public class TabellaDatiModel extends AbstractTableModel
                 // Mantieni i Gauss correnti e ricalcola solo il binario
                 long nuovoBinario = calcolaBinario(datoCorrente.getGauss());
                 
-                dati.set(rowIndex, new DatiGaussVoltBin(datoCorrente.getGauss(), nuoviVolt, nuovoBinario));
+                dati.set(rowIndex, new DatiGaussVoltBin(nuovoBinario,datoCorrente.getGauss(), nuoviVolt));
                 
                 // Notifica il cambiamento delle colonne Volt e Binario
                 fireTableCellUpdated(rowIndex, 0); // Binario
@@ -173,17 +217,18 @@ public class TabellaDatiModel extends AbstractTableModel
         }
         
         DatiGaussVoltBin dato = dati.get(rowIndex);
-        if (columnIndex == 0) 
-        {
-            return dato.getBinario();
-        } 
-        else if (columnIndex == 1) 
-        {
-            return String.format("%.2f", dato.getGauss());
-        }
-        else if (columnIndex == 2) 
-        {
-            return String.format("%.2f", dato.getVolt());
+        switch (columnIndex) {
+            case 0 -> {
+                return dato.getBinario();
+            }
+            case 1 -> {
+                return String.format("%.2f", dato.getGauss());
+            }
+            case 2 -> {
+                return String.format("%.2f", dato.getVolt());
+            }
+            default -> {
+            }
         }
         return null;
     }
@@ -196,7 +241,7 @@ public class TabellaDatiModel extends AbstractTableModel
         private final long binario;
         
         // Costruttore con tutti i parametri
-        public DatiGaussVoltBin(double gauss, double volt, long binario) 
+        public DatiGaussVoltBin(long binario, double gauss, double volt) 
         {
             this.gauss = gauss;
             this.volt = volt;
@@ -220,15 +265,15 @@ public class TabellaDatiModel extends AbstractTableModel
     }
     
     // Metodi per aggiornare i range dai campi di input
-    public void aggiornaParametri(int minGauss, int maxGauss, int minVolt, int maxVolt) {
-        this.minGauss = minGauss;
-        this.maxGauss = maxGauss;
-        this.minVolt = minVolt;
-        this.maxVolt = maxVolt;
+    public void aggiornaParametri(double minGauss, double maxGauss, double minVolt, double maxVolt) {
+        this.minGauss = (int) minGauss;
+        this.maxGauss = (int) maxGauss;
+        this.minVolt = (int) minVolt;
+        this.maxVolt = (int) maxVolt;
         ricalcolaValori();
     }
     
-    public static void salvaDati(JFrame padre, TabellaDatiModel modelloTabella, File file, String[] parametri)
+    public static void salvaDati(JFrame padre, TabellaDatiModel modelloTabella, File file, String[] parametri, String tipoFunzione)
     {
         PrintWriter writer = null;
 
@@ -236,26 +281,31 @@ public class TabellaDatiModel extends AbstractTableModel
         {
             writer = new java.io.PrintWriter(new java.io.FileWriter(file));
             
-            // Scrivi la riga di parametri nel formato punti_bit_minGauss_maxGauss_minVolt_maxVolt
+             // Ottieni tutti i dati dalla tabella
+            List<TabellaDatiModel.DatiGaussVoltBin> dati = modelloTabella.getDati();
+            
+            // Scrivi la riga di parametri nel formato punti_bit_minGauss_maxGauss_minVolt_maxVolt_tipoFunzione
             if (parametri != null && parametri.length == 6) {
                 StringBuilder parametriString = new StringBuilder();
                 for (int i = 0; i < parametri.length; i++) {
                     parametriString.append(parametri[i]);
                     if (i < parametri.length - 1) {
-                        parametriString.append("_");
+                        parametriString.append(",");
                     }
                 }
+                // Aggiungi il tipo di funzione
+                parametriString.append(",").append(tipoFunzione);
                 writer.println(parametriString.toString());
             }
-
-            // Ottieni tutti i dati dalla tabella
-            List<TabellaDatiModel.DatiGaussVoltBin> dati = modelloTabella.getDati();
-
+            
             // Scrivi ogni record nel formato [valore gauss]_[valore volt]_[valore binario]
             for(TabellaDatiModel.DatiGaussVoltBin dato : dati)
             {
-                writer.println(dato.getGauss() + "_" + dato.getVolt() + "_" + dato.getBinario());
+                writer.println(dato.getBinario() + "," + String.format("%d", (int) dato.getGauss()) + "," + 
+                             String.format("%d", (int) dato.getVolt()));
             }
+
+           
 
             JOptionPane.showMessageDialog(padre, 
                 "File salvato con successo: " + file.getName(),
@@ -276,10 +326,17 @@ public class TabellaDatiModel extends AbstractTableModel
         }
     }
     
+    // Sovraccarico del metodo salvaDati per includere il tipo di funzione
+    public static void salvaDati(JFrame padre, TabellaDatiModel modelloTabella, File file, String[] parametri)
+    {
+        // Usa la funzione esponenziale come default per retrocompatibilità
+        salvaDati(padre, modelloTabella, file, parametri, "ESPONENZIALE");
+    }
+    
     // Aggiungi il vecchio metodo per retrocompatibilità
     public static void salvaDati(JFrame padre, TabellaDatiModel modelloTabella, File file)
     {
         // Crea un array di parametri vuoti per retrocompatibilità
-        salvaDati(padre, modelloTabella, file, new String[]{"40", "12", "-1000", "1000", "0", "5000"});
+        salvaDati(padre, modelloTabella, file, new String[]{"40", "12", "-1000", "1000", "0", "5000"},"ESPONENZIALE");
     }
 }
