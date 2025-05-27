@@ -26,7 +26,7 @@ public class TabellaDatiModel extends AbstractTableModel
         ESPONENZIALE
     }
     
-    private TipoFunzione tipoFunzioneVolt = TipoFunzione.ESPONENZIALE; // Default esponenziale
+    private TipoFunzione tipoFunzioneVolt = TipoFunzione.LINEARE; // Default esponenziale
     
     public void setTipoFunzioneVolt(TipoFunzione tipo) {
         this.tipoFunzioneVolt = tipo;

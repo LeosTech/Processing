@@ -314,7 +314,7 @@ public class Finestra extends JFrame implements ActionListener
                 String[] parti = linea.split(",");
                 
                  // Controlla se è la prima linea con i parametri (6 valori)
-                if (parti.length == 6 && linea.matches("^[0-9,\\-]+$")) {
+                if (parti.length == 6 && linea.matches("^[0-9.,\\-]+$")) {
                     // È la riga dei parametri, aggiorna i campi di testo
                     try {
                         tfPunti.setText(parti[0]);
@@ -350,23 +350,23 @@ public class Finestra extends JFrame implements ActionListener
                     }
                 }
                 // Formato vecchio con 2 valori: gauss_voltbit (per retrocompatibilità)
-                else if (parti.length == 2) 
-                {
-                    try 
-                    {
-                        double gauss = Double.parseDouble(parti[0].replace(',', '.'));
-                        // Ignora il secondo valore (voltbit) e calcola automaticamente
-                        modelloTabella.aggiungiDato(gauss);
-                    } 
-                    catch (NumberFormatException ex) 
-                    {
-                        System.err.println("Formato numero non valido nella linea: " + linea);
-                    }
-                } 
-                else 
-                {
-                    System.err.println("Formato linea non valido: " + linea);
-                }
+//                else if (parti.length == 2) 
+//                {
+//                    try 
+//                    {
+//                        double gauss = Double.parseDouble(parti[0].replace(',', '.'));
+//                        // Ignora il secondo valore (voltbit) e calcola automaticamente
+//                        modelloTabella.aggiungiDato(gauss);
+//                    } 
+//                    catch (NumberFormatException ex) 
+//                    {
+//                        System.err.println("Formato numero non valido nella linea: " + linea);
+//                    }
+//                } 
+//                else 
+//                {
+//                    System.err.println("Formato linea non valido: " + linea);
+//                }
                 
                 
                 // Formato vecchio con 2 valori: gauss_voltbit (per retrocompatibilità)
