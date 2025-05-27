@@ -23,6 +23,7 @@ public class Finestra extends JFrame implements ActionListener
     private JButton bCarica;
     private JButton bSalva;
     private JButton bReset;
+    private JButton bEsponenziale; // Nuovo pulsante per funzione esponenziale
     private ChartPanel panelGrafico;
     
     // Elementi per la tabella e il modello
@@ -65,7 +66,8 @@ public class Finestra extends JFrame implements ActionListener
         // Aggiunta componenti al pannello
         pannello.add(bCarica = new JButton("Carica"));
         pannello.add(bSalva = new JButton("Salva"));
-        pannello.add(bReset = new JButton("Reset"));
+        pannello.add(bReset = new JButton("Reset (Lineare)"));
+        pannello.add(bEsponenziale = new JButton("Esponenziale")); // Nuovo pulsante
 
         // Inizializzazione dei nuovi campi di input e relative etichette
         pannello.add(lblPunti = new JLabel("Punti"));
@@ -174,6 +176,7 @@ public class Finestra extends JFrame implements ActionListener
         bCarica.addActionListener(this);
         bReset.addActionListener(this);
         bSalva.addActionListener(this);
+        bEsponenziale.addActionListener(this); // Aggiungi listener per il nuovo pulsante
 
         // Aggiungo DocumentListener ai campi di testo per aggiornare il valore quando cambia
         tfPunti.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -190,10 +193,11 @@ public class Finestra extends JFrame implements ActionListener
             }
         });
 
-        // Posizionamento
+        // Posizionamento (modificato per includere il nuovo pulsante)
         bCarica.setBounds(30, 30, 100, 30);
         bSalva.setBounds(160, 30, 100, 30);
-        bReset.setBounds(290, 30, 100, 30);
+        bReset.setBounds(290, 30, 120, 30); // Leggermente più largo per il testo
+        bEsponenziale.setBounds(430, 30, 120, 30); // Nuovo pulsante
         
         // Posizionamento campi di testo e relative etichette
         int startY = 80;
@@ -258,7 +262,18 @@ public class Finestra extends JFrame implements ActionListener
         else if (e.getSource() == bReset)
         {
             modelloTabella.svuotaTabella();
+            // Imposta la funzione lineare prima di generare i punti
+            modelloTabella.setTipoFunzioneVolt(TabellaDatiModel.TipoFunzione.LINEARE);
             generaPuntiLineari();
+            // Aggiorna l'etichetta con il numero di punti
+            lblPunti.setText("Punti (" + modelloTabella.getRowCount() + ")");
+        }
+        else if (e.getSource() == bEsponenziale)
+        {
+            modelloTabella.svuotaTabella();
+            // Imposta la funzione esponenziale prima di generare i punti
+            modelloTabella.setTipoFunzioneVolt(TabellaDatiModel.TipoFunzione.ESPONENZIALE);
+            generaPuntiLineari(); // Usa lo stesso metodo ma con funzione esponenziale
             // Aggiorna l'etichetta con il numero di punti
             lblPunti.setText("Punti (" + modelloTabella.getRowCount() + ")");
         }
@@ -313,8 +328,8 @@ public class Finestra extends JFrame implements ActionListener
                 // Dividi la linea in base al carattere "_"
                 String[] parti = linea.split(",");
                 
-                 // Controlla se è la prima linea con i parametri (6 valori)
-                if (parti.length == 6 && linea.matches("^[0-9.,\\-]+$")) {
+                 // Controlla se è la prima linea con i parametri (6 o 7 valori)
+                if ((parti.length == 6 || parti.length == 7) && linea.matches("^[0-9.,\\-A-Z]+$")) {
                     // È la riga dei parametri, aggiorna i campi di testo
                     try {
                         tfPunti.setText(parti[0]);
@@ -323,6 +338,16 @@ public class Finestra extends JFrame implements ActionListener
                         tfMaxGauss.setText(parti[3]);
                         tfMinVolt.setText(parti[4]);
                         tfMaxVolt.setText(parti[5]);
+                        
+                        // Se presente, imposta anche il tipo di funzione
+                        if (parti.length == 7) {
+                            String tipoFunzione = parti[6].trim().toUpperCase();
+                            if ("LINEARE".equals(tipoFunzione)) {
+                                modelloTabella.setTipoFunzioneVolt(TabellaDatiModel.TipoFunzione.LINEARE);
+                            } else if ("ESPONENZIALE".equals(tipoFunzione)) {
+                                modelloTabella.setTipoFunzioneVolt(TabellaDatiModel.TipoFunzione.ESPONENZIALE);
+                            }
+                        }
                         
                         // Aggiorna i parametri del modello
                         updateParametri();
@@ -349,27 +374,6 @@ public class Finestra extends JFrame implements ActionListener
                         System.err.println("Formato numero non valido nella linea: " + linea);
                     }
                 }
-                // Formato vecchio con 2 valori: gauss_voltbit (per retrocompatibilità)
-//                else if (parti.length == 2) 
-//                {
-//                    try 
-//                    {
-//                        double gauss = Double.parseDouble(parti[0].replace(',', '.'));
-//                        // Ignora il secondo valore (voltbit) e calcola automaticamente
-//                        modelloTabella.aggiungiDato(gauss);
-//                    } 
-//                    catch (NumberFormatException ex) 
-//                    {
-//                        System.err.println("Formato numero non valido nella linea: " + linea);
-//                    }
-//                } 
-//                else 
-//                {
-//                    System.err.println("Formato linea non valido: " + linea);
-//                }
-                
-                
-                // Formato vecchio con 2 valori: gauss_voltbit (per retrocompatibilità)
             }
 
             JOptionPane.showMessageDialog(this, 
@@ -416,7 +420,10 @@ public class Finestra extends JFrame implements ActionListener
                 tfMaxVolt.getText().trim()
             };
             
-            TabellaDatiModel.salvaDati(this, modelloTabella, fileChooser.getSelectedFile(), parametri);
+            // Ottieni il tipo di funzione corrente per salvarlo
+            String tipoFunzione = modelloTabella.getTipoFunzioneVolt().toString();
+            
+            TabellaDatiModel.salvaDati(this, modelloTabella, fileChooser.getSelectedFile(), parametri, tipoFunzione);
         }
     }
     
