@@ -162,9 +162,9 @@ public class TabellaDatiModel extends AbstractTableModel
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) 
     {
-        // Rende editabili sia Gauss (colonna 1) che MilliVolt (colonna 2)
-        // La colonna Binario (colonna 0) viene calcolata automaticamente
-        return columnIndex == 1 || columnIndex == 2;
+        // Solo la colonna MilliVolt (colonna 2) è editabile
+        // Le colonne Binario (colonna 0) e Gauss (colonna 1) non sono editabili
+        return columnIndex == 2;
     }
     
     @Override
@@ -178,19 +178,8 @@ public class TabellaDatiModel extends AbstractTableModel
         try {
             DatiGaussVoltBin datoCorrente = dati.get(rowIndex);
             
-            if (columnIndex == 1) { // Modifica Gauss
-                double nuovoGauss = Double.parseDouble(aValue.toString().trim());
-                
-                // Calcola automaticamente i nuovi Volt e Binario
-                double nuoviVolt = calcolaVolt(nuovoGauss);
-                long nuovoBinario = calcolaBinario(nuovoGauss);
-                
-                dati.set(rowIndex, new DatiGaussVoltBin(nuovoBinario,nuovoGauss, nuoviVolt));
-                
-                // Notifica il cambiamento di tutte le colonne
-                fireTableRowUpdated(rowIndex);
-                
-            } else if (columnIndex == 2) { // Modifica Volt
+            // Solo la colonna MilliVolt (colonna 2) può essere modificata
+            if (columnIndex == 2) { // Modifica Volt
                 double nuoviVolt = Double.parseDouble(aValue.toString().trim());
                 
                 // Mantieni i Gauss correnti e ricalcola solo il binario
