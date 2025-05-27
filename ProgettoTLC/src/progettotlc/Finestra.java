@@ -15,6 +15,9 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import java.awt.Color;
 import java.awt.BasicStroke;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Finestra extends JFrame implements ActionListener
 {
@@ -438,7 +441,7 @@ public class Finestra extends JFrame implements ActionListener
             double maxGauss = Double.parseDouble(tfMaxGauss.getText().trim());
             double minVolt = Double.parseDouble(tfMinVolt.getText().trim());
             double maxVolt = Double.parseDouble(tfMaxVolt.getText().trim());
-            
+
             // Verifica validità dei parametri
             if (numeroPunti <= 0 || numeroBit <= 0 || 
                 minGauss >= maxGauss || minVolt >= maxVolt) {
@@ -451,44 +454,73 @@ public class Finestra extends JFrame implements ActionListener
                     "Errore Parametri", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             // Aggiorna i parametri del modello
             modelloTabella.setNumeroBit(numeroBit);
             modelloTabella.aggiornaParametri(minGauss, maxGauss, minVolt, maxVolt);
-            
+
             // Svuota la tabella prima di aggiungere nuovi punti
             modelloTabella.svuotaTabella();
+
+            // Verifica se 0 è nel range specificato
+            boolean zeroNelRange = (minGauss <= 0 && maxGauss >= 0);
+
             
-            // Assicurati che ci sia sempre la riga con 0 Gauss se è nel range
-            boolean hasZero = (minGauss <= 0 && maxGauss >= 0);
-            
-            // Se 0 è nel range e non è già incluso nei punti, aggiungilo
-            if (hasZero && (minGauss != 0 || maxGauss != 0)) {
-                modelloTabella.aggiungiDato(0);
-            }
-            
-            // Genera i punti in modo lineare
-            for (int i = 0; i < numeroPunti; i++) {
-                // Calcola il progresso lineare da 0 a 1
-                double progresso = (numeroPunti == 1) ? 0.0 : (double) i / (numeroPunti - 1);
-                
-                // Calcola valori Gauss in modo lineare
-                double gauss = minGauss + progresso * (maxGauss - minGauss);
-                
-                // Aggiungi alla tabella (volt e binario vengono calcolati automaticamente)
-                modelloTabella.aggiungiDato(gauss);
-                
-                // Piccola pausa per vedere l'animazione dell'aggiunta dei punti
-                try {
-                    Thread.sleep(30);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+
+            // Crea una lista per raccogliere tutti i punti
+            List<Double> puntiDaAggiungere = new ArrayList<>();
+
+            if (numeroPunti == 1) {
+                // Se c'è un solo punto richiesto, mettilo al centro del range
+                double gauss = (minGauss + maxGauss) / 2.0;
+                puntiDaAggiungere.add(gauss);
+            } else {
+                // Distribuzione uniforme dei punti richiesti
+                for (int i = 0; i < numeroPunti; i++) {
+                    double progresso = (double) i / (numeroPunti - 1);
+                    double gauss = minGauss + progresso * (maxGauss - minGauss);
+                    puntiDaAggiungere.add(gauss);
                 }
             }
-            
+
+            // Se 0 è nel range, aggiungilo come punto extra
+            if (zeroNelRange) {
+                // Verifica se 0 è già presente tra i punti generati (con tolleranza)
+                boolean zeroGiaPresente = false;
+                double tolleranza = 1e-10; // Tolleranza per confronto floating point
+
+                for (double punto : puntiDaAggiungere) {
+                    if (Math.abs(punto) < tolleranza) {
+                        zeroGiaPresente = true;
+                        break;
+                    }
+                }
+
+                // Se 0 non è già presente, aggiungilo
+                if (!zeroGiaPresente) {
+                    puntiDaAggiungere.add(0.0);
+                }
+            }
+
+            // Ordina tutti i punti in ordine crescente
+            Collections.sort(puntiDaAggiungere);
+
+            // Aggiungi i punti ordinati alla tabella
+            for (double punto : puntiDaAggiungere) {
+                modelloTabella.aggiungiDato(punto);
+            }
+
+            // Piccola pausa per l'animazione dopo aver generato tutti i punti
+            int puntiTotali = puntiDaAggiungere.size();
+            try {
+                Thread.sleep(30 * puntiTotali);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             // Aggiorna il grafico finale
             aggiornaGrafico();
-            
+
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, 
                 "Errore nel formato dei parametri: " + e.getMessage(),
