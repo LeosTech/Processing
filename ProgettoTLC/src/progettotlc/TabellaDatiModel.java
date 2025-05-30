@@ -96,18 +96,9 @@ public class TabellaDatiModel extends AbstractTableModel
     
     private double calcolaVoltLineare(double gauss) {
         // Funzione lineare: mappa linearmente il range gauss sul range volt
-        double rangeGauss = maxGauss - minGauss;
-        double rangeVolt = maxVolt - minVolt;
+        double volt = (2.5+gauss*0.0023324);
         
-        if (rangeGauss == 0) return minVolt;
-        
-        // Normalizza gauss nel range [0, 1]
-        double normalizzato = (gauss - minGauss) / rangeGauss;
-        // Limita il valore tra 0 e 1
-        normalizzato = Math.max(0, Math.min(1, normalizzato));
-        
-        // Mappa sul range volt
-        return minVolt + normalizzato * rangeVolt;
+        return volt*1000;
     }
     
     private double calcolaVoltEsponenziale(double gauss) {
